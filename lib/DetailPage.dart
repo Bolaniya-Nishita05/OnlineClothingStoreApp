@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:onlineclothingstoreapp/api/FavouriteApi.dart';
 import 'package:onlineclothingstoreapp/api/OrderApi.dart';
 
 class DetailPage extends StatefulWidget
@@ -43,6 +44,7 @@ class _DetailPageState extends State<DetailPage> {
   Map<String,dynamic> product=new Map();
   int loggedUserID=0;
   Map<String,dynamic> order=new Map();
+  int favouriteID=0;
 
   @override
   void initState() {
@@ -87,77 +89,91 @@ class _DetailPageState extends State<DetailPage> {
           child: Column(
             children: [
               Expanded(
-                child: Container(
-                  child: Text(product['productName'],
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height*0.02,
-                          color: Colors.orange.shade900,
-                          fontWeight: FontWeight.bold
+                child: Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.85,
+                      child: Align(
+                        child: Text(product['productName'],
+                            style: TextStyle(
+                                fontSize: MediaQuery.of(context).size.height*0.02,
+                                color: Colors.orange.shade900,
+                                fontWeight: FontWeight.bold
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                        ),
+                        alignment: Alignment.center,
                       ),
-                      textAlign: TextAlign.center
-                  ),
-                  width: MediaQuery.of(context).size.width,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(right: 20),
+                      child: FutureBuilder<List<dynamic>>(
+                          future: FavouriteApi().getFavouriteByUserID(loggedUserID),
+                          builder: (context, snapshot) {
+                            if(snapshot.hasData){
+
+                              for(var favourite in snapshot.data!){
+                                if(widget.product!['productID']==favourite['productID']){
+                                  favouriteID=favourite['favouriteID'];
+                                  break;
+                                }
+                              }
+
+                              return InkWell(
+                                onTap: () async {
+                                  if (favouriteID != 0) {
+                                    await FavouriteApi().deleteFavourite(favouriteID.toString());
+
+                                    favouriteID = 0;
+                                    setState(() {
+
+                                    });
+                                  } else {
+                                    await FavouriteApi().addFavourite({
+                                      'favouriteID': "5",
+                                      'productID': widget.product!['productID'],
+                                      'userID': loggedUserID,
+                                    });
+
+                                    setState(() {
+
+                                    });
+                                  }
+
+                                },
+                                child: Container(
+                                  child: Icon(
+                                    favouriteID!=0?Icons.favorite_rounded:Icons.favorite_outline_rounded,
+                                    color: Colors.orange.shade900,
+                                  ),
+                                ),
+                              );
+                            }
+                            else{
+                              return Center(child: CircularProgressIndicator(color: Colors.blueAccent,));
+                            }
+                          }
+                      ),
+                    )
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 ),
               ),
               Expanded(
                 flex: 5,
                 child: Container(
-                  child:Column(
-                      children: [
-                        Expanded(
-                          child: CarouselSlider(
-                            carouselController: carousalController,
-                            options: CarouselOptions(
-                              enableInfiniteScroll: false,
-                              viewportFraction: 1,
-                              enlargeCenterPage: true,
-                              enlargeFactor: 10,
-                              autoPlay: true,
-                              autoPlayAnimationDuration: Duration(seconds: 1),
-                              autoPlayInterval: Duration(seconds: 2),
-                              autoPlayCurve: Easing.linear,
-                              pauseAutoPlayInFiniteScroll: true,
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  currentSlide=index;
-                                });
-                              },
-                            ),
-                            items: imgList.map((i) {
-                              return Builder(
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    child: ClipRRect(
-                                      child: Image.network(i,
-                                        fit: BoxFit.fill,
-                                        width: MediaQuery.of(context).size.width,
-                                        height: MediaQuery.of(context).size.height*0.35,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: imgList.asMap().entries.map((entry) {
-                            return GestureDetector(
-                              onTap: () => carousalController.animateToPage(entry.key),
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width*0.015,
-                                  height: MediaQuery.of(context).size.height*0.015,
-                                  margin: EdgeInsets.symmetric(horizontal: 1,vertical: 2),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.amber.withOpacity(currentSlide == entry.key ? 0.9 : 0.4))
-                              ),
-                            );
-                          }).toList(),
-                        )
-                      ]
+                  child:ClipRRect(
+                    child: Image.network(widget.product!['imgUrl'],
+                      fit: BoxFit.fill,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height*0.35,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 3,color: Colors.brown.shade700),
+                      borderRadius: BorderRadius.circular(10),
                   ),
                   margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 ),

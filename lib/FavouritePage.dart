@@ -19,6 +19,7 @@ class FavouritePage extends StatefulWidget {
 
 class _FavouritePageState extends State<FavouritePage> {
   var loggedUserId;
+  late Future<List<dynamic>> _favouriteFuture;
 
   @override
   void initState()
@@ -26,12 +27,24 @@ class _FavouritePageState extends State<FavouritePage> {
     super.initState();
 
     this.loggedUserId=widget.loggedUserId;
+    refreshFavourites();
   }
 
   void refreshFavourites() {
     setState(() {
-
+      _favouriteFuture = FavouriteApi().getFavouriteByUserID(loggedUserId);
     });
+  }
+
+  Future<void> _deleteFavourite(String favouriteId) async {
+    try {
+      await FavouriteApi().deleteFavourite(favouriteId);
+      refreshFavourites(); // Trigger reload after successful deletion
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete: ${e.toString()}')),
+      );
+    }
   }
 
 
@@ -60,7 +73,7 @@ class _FavouritePageState extends State<FavouritePage> {
             SizedBox(height: 10,),
             Expanded(
               child: FutureBuilder(
-                  future: FavouriteApi().getFavouriteByUserID(loggedUserId),
+                  future: _favouriteFuture,
                   builder: (context, snapshot) {
                     if(snapshot.hasError){
                       return Center(
@@ -88,7 +101,7 @@ class _FavouritePageState extends State<FavouritePage> {
                           itemBuilder: (context, index) {
                             return FavouriteItem(
                               favourite: favourites[index],
-                              onDelete: refreshFavourites,
+                              onDelete: _deleteFavourite,
                             );
                           },
                         );
@@ -128,7 +141,7 @@ class _FavouritePageState extends State<FavouritePage> {
 
 class FavouriteItem extends StatefulWidget {
   Map<String,dynamic> favourite=new Map();
-  final VoidCallback onDelete;
+  final Future<void> Function(String) onDelete;
 
   FavouriteItem({
     required this.favourite,
@@ -142,57 +155,68 @@ class FavouriteItem extends StatefulWidget {
 class _FavouriteItemState extends State<FavouriteItem> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 15,
-      shadowColor: Colors.black87,
-      surfaceTintColor: Colors.purple.shade100,
-      child: Container(
-        child: Column(
-            children: [
-              ClipRRect(
-                child: Image.network(
-                  widget.favourite['imgUrl'].toString(),
-                  fit: BoxFit.fill,
-                  height: MediaQuery.of(context).size.height*0.15,
-                  width: MediaQuery.of(context).size.width*0.3,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              Row(
-                children: [
-                  Container(
-                    child: Text(widget.favourite['productName'].toString(),
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.brown.shade700,
-                          fontWeight: FontWeight.bold
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    width: MediaQuery.of(context).size.width*0.3,
-                    margin: EdgeInsets.only(left: 10),
-                  ),
-                  InkWell(
-                    onTap: (){
-                      Map<String,dynamic> favourite = new Map();
+    return InkWell(
+      onTap: () async {
+        var product = await ProductApi().getProductByProductID(widget.favourite['productID']);
+        
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(product: product, loggedUserID: 10,),))
+            .then((value) {
+          if(value==true){
+            setState(() {
 
-                      // setState(() {
-                      //   l2[index].isLiked=!l2[index].isLiked;
-                      // });
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.favorite_border_outlined,
-                        color: Colors.orange.shade700,
-                        size: 15,
+            });
+          }
+        }
+        );
+      },
+      child: Card(
+        elevation: 15,
+        shadowColor: Colors.black87,
+        surfaceTintColor: Colors.purple.shade100,
+        child: Container(
+          child: Column(
+              children: [
+                ClipRRect(
+                  child: Image.network(
+                    widget.favourite['imgUrl'].toString(),
+                    fit: BoxFit.fill,
+                    height: MediaQuery.of(context).size.height*0.15,
+                    width: MediaQuery.of(context).size.width*0.3,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      child: Text(widget.favourite['productName'].toString(),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.brown.shade700,
+                            fontWeight: FontWeight.bold
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      padding: EdgeInsets.only(right: 10),
+                      width: MediaQuery.of(context).size.width*0.3,
+                      margin: EdgeInsets.only(left: 10),
                     ),
-                  )
-                ],
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              ),
-            ],
+                    InkWell(
+                      onTap: () async{
+                        await widget.onDelete(widget.favourite['favouriteID'].toString());
+                      },
+                      child: Container(
+                        child: Icon(
+                          Icons.favorite_rounded,
+                          color: Colors.orange.shade700,
+                          size: 15,
+                        ),
+                        padding: EdgeInsets.only(right: 10),
+                      ),
+                    )
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+              ],
+          ),
         ),
       ),
     );

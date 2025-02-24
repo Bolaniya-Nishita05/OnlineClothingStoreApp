@@ -111,13 +111,13 @@ class _CartPageState extends State<CartPage> {
 
               ),
             ),
-            SizedBox(height: 20),
-            CouponField(),
-            SizedBox(height: 20),
-            PriceSummary(),
-            SizedBox(height: 20),
-            CheckoutButton(),
-            SizedBox(height: 50,)
+            // SizedBox(height: 20),
+            // CouponField(),
+            // SizedBox(height: 20),
+            // PriceSummary(),
+            // SizedBox(height: 20),
+            // CheckoutButton(),
+            // SizedBox(height: 50,)
           ],
         ),
       ),
@@ -222,7 +222,7 @@ class _CartItemState extends State<CartItem> {
                               onPressed: () async {
                                 Navigator.pop(context); // Close the confirmation dialog first
 
-                                bool isDeleted = await OrderApi().deleteOrder(widget.order['orderID']);
+                                bool isDeleted = await OrderApi().deleteOrder(widget.order['orderID'].toString());
 
                                 bool? result = await showCupertinoDialog(
                                   context: context,

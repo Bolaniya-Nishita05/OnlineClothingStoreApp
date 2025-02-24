@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:onlineclothingstoreapp/AdminListPage.dart';
 import 'package:onlineclothingstoreapp/BrandFormPage.dart';
 import 'package:onlineclothingstoreapp/CategoryFormPage.dart';
+import 'package:onlineclothingstoreapp/DashboardPage.dart';
 import 'package:onlineclothingstoreapp/HomePage.dart';
 import 'package:onlineclothingstoreapp/ListPage.dart';
 import 'package:onlineclothingstoreapp/LoginPage.dart';
 import 'package:onlineclothingstoreapp/ProductFormPage.dart';
+import 'package:onlineclothingstoreapp/ProductListPage.dart';
 import 'package:onlineclothingstoreapp/UserFormPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,6 +72,8 @@ class _MyAppState extends State<MyApp> {
         //BrandFormPage(brand: null,)
         //ProductFormPage(product: null,)
         //AdminListPage(listType: "Product",)
+        //DashboardPage()
+        //ProductListPage(loggedUserId: 10,)
         FutureBuilder<Widget>(
           future: nextScreen(),
           builder: (context, snapshot) {

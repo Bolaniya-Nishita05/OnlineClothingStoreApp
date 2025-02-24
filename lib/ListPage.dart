@@ -1,10 +1,14 @@
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onlineclothingstoreapp/AdminListPage.dart';
 import 'package:onlineclothingstoreapp/CartPage.dart';
 import 'package:onlineclothingstoreapp/CategoryFormPage.dart';
+import 'package:onlineclothingstoreapp/DashboardPage.dart';
 import 'package:onlineclothingstoreapp/DetailPage.dart';
 import 'package:onlineclothingstoreapp/FavouritePage.dart';
+import 'package:onlineclothingstoreapp/ProductListPage.dart';
 import 'package:onlineclothingstoreapp/ProfilePage.dart';
 import 'package:onlineclothingstoreapp/api/BrandApi.dart';
 import 'package:onlineclothingstoreapp/api/CategoryApi.dart';
@@ -30,6 +34,19 @@ class _ListPageState extends State<ListPage> {
   var categoryID,categoryName;
   var selectedIndex=0;
   var loggedUserId;
+
+  var imgList=[
+    "https://i.mdel.net/i/db/2017/7/728816/728816-800w.jpg",
+    "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
+    "https://www.shutterstock.com/image-photo/stylish-man-wearing-sunglasses-white-260nw-1562565541.jpg",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDY828-ftxjCNjjY9II8r2LCDdBTCsF3ntp2aVGZPViVLx6zPOl-A9DObcI89oVDyiG7s&usqp=CAU",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRORIqjGDpr-_rGWoFSWCK4AAgbfeyASupPA&usqp=CAU",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI0K8WemfmhTsQOVq8jJnnWCTMNoH5G6LYvA&usqp=CAU",
+    "https://st.depositphotos.com/1003840/1806/i/450/depositphotos_18067151-stock-photo-young-woman-in-casual-clothes.jpg"
+  ];
+
+  var carousalController=new CarouselController();
+  var currentSlide=0;
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -77,31 +94,156 @@ class _ListPageState extends State<ListPage> {
           padding: EdgeInsets.only(top: 10),
           child: Column(
             children: [
+
               Expanded(
+                flex: 5,
                 child: Container(
-                  child: TextField(
-                    controller: name,
-                    decoration: InputDecoration(
-                        hintText: "Search Your Dress",
-                        hintStyle: TextStyle(fontSize: 15,),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(color: Colors.grey.shade500)
+                  child:Column(
+                      children: [
+                        Expanded(
+                          child: CarouselSlider(
+                            carouselController: carousalController,
+                            options: CarouselOptions(
+                              enableInfiniteScroll: true,
+                              viewportFraction: 1,
+                              enlargeCenterPage: true,
+                              enlargeFactor: 10,
+                              autoPlay: true,
+                              autoPlayAnimationDuration: Duration(seconds: 1),
+                              autoPlayInterval: Duration(seconds: 2),
+                              autoPlayCurve: Easing.linear,
+                              pauseAutoPlayInFiniteScroll: false,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  currentSlide=index;
+                                });
+                              },
+                            ),
+                            items: imgList.map((i) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    child: ClipRRect(
+                                      child: Image.network(i,
+                                        fit: BoxFit.fill,
+                                        width: MediaQuery.of(context).size.width,
+                                        height: MediaQuery.of(context).size.height*0.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(color: Colors.grey.shade700)
-                        ),
-                        prefixIcon: Icon(Icons.search,color: Colors.grey.shade700),
-                        contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 0)
-                    ),
-                    cursorColor: Colors.grey.shade700,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: imgList.asMap().entries.map((entry) {
+                            return GestureDetector(
+                              onTap: () => carousalController.animateToPage(entry.key),
+                              child: Container(
+                                  width: MediaQuery.of(context).size.width*0.015,
+                                  height: MediaQuery.of(context).size.height*0.015,
+                                  margin: EdgeInsets.symmetric(horizontal: 2,vertical: 2),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.amber.withOpacity(currentSlide == entry.key ? 0.9 : 0.4))
+                              ),
+                            );
+                          }).toList(),
+                        )
+                      ]
                   ),
-                  height: 30,
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 ),
               ),
               Expanded(
+                child: Container(
+                  child: Text("Brands Recommended for you",
+                    style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.height*0.025,
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.fromLTRB(20, 0, 10, 10),
+                ),
+              ),
+              Expanded(
+                  flex: 4,
+                  child: FutureBuilder<List<dynamic>>(
+                    future: BrandApi().getBrands(),
+                    builder: (context, snapshot) {
+                        if(snapshot.hasData){
+                        return Container(
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductListPage(loggedUserId: loggedUserId,BrandID: snapshot.data![index]['brandId'],CategoryID: 0,),));
+                                  },
+                                  child: Container(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          child: Text(snapshot.data![index]['brandName'],
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context).size.height*0.018,
+                                                color: Colors.orange.shade700,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                          width: MediaQuery.of(context).size.width,
+                                        ),
+                                        Container(
+                                          child: Text(snapshot.data![index]['description'],
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: MediaQuery.of(context).size.height*0.018,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          width: MediaQuery.of(context).size.width,
+                                        ),
+                                      ],
+                                    ),
+                                    width: MediaQuery.of(context).size.width*0.2,
+                                    margin: EdgeInsets.fromLTRB(20,0,20,10),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(border: Border.all(
+                                      color: Colors.black87,
+                                      style: BorderStyle.solid,)),
+                                  ),
+                                );
+                              },
+                            ),
+                        );
+                        }
+                        else{
+                          return Center(child: CircularProgressIndicator(color: Colors.blueAccent,));
+                        }
+                      }
+                  )
+              ),
+              SizedBox(height: 10,),
+              Expanded(
+                child: Container(
+                  child: Text("Categories",
+                    style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.height*0.025,
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                ),
+              ),
+              Expanded(
+                flex: 5,
                 child: FutureBuilder<List<dynamic>>(
                   future: CategoryApi().getCategories(),
                   builder: (context, snapshot) {
@@ -113,37 +255,43 @@ class _ListPageState extends State<ListPage> {
 
                       return Padding(
                         padding: EdgeInsets.fromLTRB(20,0,20,0),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                            childAspectRatio: 2,
+                          ),
                           itemCount: categories.length,
                           itemBuilder: (context, index) {
                             return InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    categoryName=categories[index]['categoryName'].toString();
-                                    categoryID=categories[index]['categoryId'];
-                                  });
-                                },
-                                child: Container(
-                                  child: Text(categories[index]['categoryName'].toString(),
-                                    style: TextStyle(
-                                        color: categoryName==categories[index]['categoryName'].toString()?Colors.white:Colors.black87,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15
-                                    ),
-                                    textAlign: TextAlign.center,
+                              onTap: () {
+                                setState(() {
+                                  categoryName=categories[index]['categoryName'].toString();
+                                  categoryID=categories[index]['categoryId'];
+                                });
+                                
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductListPage(loggedUserId: loggedUserId,CategoryID: categories[index]['categoryId'],),));
+                              },
+                              child: Container(
+                                child: Text(categories[index]['categoryName'].toString(),
+                                  style: TextStyle(
+                                      color: categoryName==categories[index]['categoryName'].toString()?Colors.white:Colors.black87,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.height*0.018,
                                   ),
-                                  margin: index==0?EdgeInsets.fromLTRB(0,0,10,0):EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      color: categoryName==categories[index]['categoryName'].toString()
-                                          ?Colors.black87
-                                          :Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(5),
-                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                              );
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: categoryName==categories[index]['categoryName'].toString()
+                                      ?Colors.black87
+                                      :Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            );
                           },
                         ),
                       );
@@ -154,188 +302,9 @@ class _ListPageState extends State<ListPage> {
                   },
                 ),
               ),
-              Expanded(
-                  flex: 4,
-                  child: FutureBuilder(future: renderProducts(categoryID), builder: (context, snapshot) {
-                    if(snapshot.hasData){
-                      if(snapshot.data!.isNotEmpty){
-                        return Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(product: snapshot.data![index], loggedUserID: this.loggedUserId,),))
-                                        .then((value) {
-                                      if(value==true){
-                                        setState(() {
-
-                                        });
-                                      }
-                                    }
-                                    );
-                                  },
-                                  child: Card(
-                                    elevation: 15,
-                                    shadowColor: Colors.black87,
-                                    surfaceTintColor: Colors.purple.shade100,
-                                    margin: index==0?EdgeInsets.fromLTRB(0,0,10,10):EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                    child: Container(
-                                      child: Column(
-                                          children: [
-                                            ClipRRect(
-                                              child: Image.network(
-                                                snapshot.data![index]['imgUrl'].toString(),
-                                                fit: BoxFit.fill,
-                                                height: MediaQuery.of(context).size.height*0.2,
-                                                width: MediaQuery.of(context).size.width*0.3,
-                                              ),
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            Container(
-                                              child: Text(snapshot.data![index]['productName'].toString(),
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.brown.shade700,
-                                                    fontWeight: FontWeight.bold
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              width: MediaQuery.of(context).size.width*0.3,
-                                              margin: EdgeInsets.only(left: 10),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  child: Text('\u{20B9}${snapshot.data![index]['price'].toString()}',
-                                                    style: TextStyle(
-                                                        color: Colors.orange.shade900,
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.bold
-                                                    ),
-                                                  ),
-                                                  width: MediaQuery.of(context).size.width*0.3,
-                                                  padding: EdgeInsets.only(left:20),
-                                                ),
-                                                InkWell(
-                                                  onTap: (){
-                                                    Map<String,dynamic> favourite = new Map();
-
-                                                    // setState(() {
-                                                    //   l2[index].isLiked=!l2[index].isLiked;
-                                                    // });
-                                                  },
-                                                  child: Container(
-                                                    child: Icon(
-                                                      Icons.favorite_border_outlined,
-                                                      color: Colors.orange.shade700,
-                                                      size: 15,
-                                                    ),
-                                                    padding: EdgeInsets.only(right: 10),
-                                                  ),
-                                                )
-                                              ],
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            ),
-                                          ]
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                        );
-                      }
-
-                      else {
-                        return Center(
-                            child: Text("Product List is Empty......",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade700,
-                                  fontSize: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .height * 0.02
-                              ),
-                            )
-                        );
-                      }
-                    }
-                    else{
-                      return Center(child: CircularProgressIndicator(color: Colors.blueAccent,));
-                    }
-                  },),
-              ),
-              Expanded(
-                child: Container(
-                  child: Text("Brands Recommended for you",
-                    style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20
-                    ),
-                  ),
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.fromLTRB(20, 0, 10, 10),
-                ),
-              ),
-              Expanded(
-                  flex: 5,
-                  child: FutureBuilder<List<dynamic>>(
-                    future: BrandApi().getBrands(),
-                    builder: (context, snapshot) {
-                        if(snapshot.hasData){
-                        return Container(
-                          child: ListView.builder(
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        child: Text(snapshot.data![index]['brandName'],
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.height*0.018,
-                                              color: Colors.orange.shade700,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                        width: MediaQuery.of(context).size.width,
-                                      ),
-                                      Container(
-                                        child: Text(snapshot.data![index]['description'],
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.height*0.018,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                        width: MediaQuery.of(context).size.width,
-                                      ),
-                                    ],
-                                  ),
-                                  width: MediaQuery.of(context).size.width*0.2,
-                                  margin: EdgeInsets.fromLTRB(20,0,20,10),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(border: Border.all(
-                                    color: Colors.black87,
-                                    style: BorderStyle.solid,)),
-                                );
-                              },
-                            ),
-                        );
-                        }
-                        else{
-                          return Center(child: CircularProgressIndicator(color: Colors.blueAccent,));
-                        }
-                      }
-                    )
-                  )
-                ]
-              ),
+              SizedBox(height: 20,)
+            ]
+          ),
         ),
       ),
       drawer: Drawer(
@@ -362,6 +331,15 @@ class _ListPageState extends State<ListPage> {
                   )
               ),
             ),
+            ListTile(
+              leading: Icon(Icons.dashboard_outlined),
+              title: Text("Dashboard"),
+              trailing: Icon(Icons.arrow_forward_ios_rounded),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardPage(),));
+              },
+            ),
+            Divider(),
             ListTile(
               leading: Icon(Icons.category_outlined),
               title: Text("Categories"),

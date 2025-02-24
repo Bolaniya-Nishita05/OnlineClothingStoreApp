@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text("Price \$200",
+                              Text("Price \₹200",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   // fontSize: 18,
