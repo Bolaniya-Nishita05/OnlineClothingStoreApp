@@ -307,8 +307,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
                             this.product!['categoryID'] = categoryID;
                             this.product!['brandID'] = brandID;
                             this.product!['price'] = double.parse(price.text);
-                            this.product!['size'] = "S";
-                            this.product!['color']="red";
                             this.product!['stockQuantity'] = int.parse(stockQuantity.text);
                             this.product!['imgUrl'] = imgUrl.text;
 

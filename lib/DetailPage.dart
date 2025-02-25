@@ -24,9 +24,9 @@ class DetailPage extends StatefulWidget
 }
 
 class _DetailPageState extends State<DetailPage> {
-  String Size="";
+  String Size="S";
 
-  String Color="";
+  String Color="Red";
 
   var imgList=[
     "https://i.mdel.net/i/db/2017/7/728816/728816-800w.jpg",
@@ -54,13 +54,13 @@ class _DetailPageState extends State<DetailPage> {
     if(widget.product!=null){
       product=widget.product!;
       this.loggedUserID=widget.loggedUserID;
-      this.Size=product['size'].toString();
-      this.Color=product['color'].toString();
       order['quantity']=1;
     }
 
     if(widget.order!=null){
       this.order=widget.order!;
+      this.Size=this.order['size'];
+      this.Color=this.order['color'];
     }
   }
 
@@ -291,77 +291,105 @@ class _DetailPageState extends State<DetailPage> {
                 child: Container(
                   child: Row(
                     children: [
-                      Container(
-                        child: Center(
-                          child: Text("S",
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontSize: MediaQuery.of(context).size.height*0.02,
-                              fontWeight: FontWeight.bold,
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            Size="S";
+                          });
+                        },
+                        child: Container(
+                          child: Center(
+                            child: Text("S",
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: MediaQuery.of(context).size.height*0.02,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
+                          height: MediaQuery.of(context).size.height*0.2,
+                          width: MediaQuery.of(context).size.width*0.1,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Size=="S"?Colors.grey.shade700:Colors.white,width: 2),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
                         ),
-                        height: MediaQuery.of(context).size.height*0.2,
-                        width: MediaQuery.of(context).size.width*0.1,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Size=="S"?Colors.grey.shade700:Colors.white,width: 2),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
                       ),
-                      Container(
-                        child: Center(
-                          child: Text("M",
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontSize: MediaQuery.of(context).size.height*0.02,
-                              fontWeight: FontWeight.bold,
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            Size="M";
+                          });
+                        },
+                        child: Container(
+                          child: Center(
+                            child: Text("M",
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: MediaQuery.of(context).size.height*0.02,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
+                          height: MediaQuery.of(context).size.height*0.2,
+                          width: MediaQuery.of(context).size.width*0.1,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Size=="M"?Colors.grey.shade700:Colors.white,width: 2),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
                         ),
-                        height: MediaQuery.of(context).size.height*0.2,
-                        width: MediaQuery.of(context).size.width*0.1,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Size=="M"?Colors.grey.shade700:Colors.white,width: 2),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
                       ),
-                      Container(
-                        child: Center(
-                          child: Text("L",
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontSize: MediaQuery.of(context).size.height*0.02,
-                              fontWeight: FontWeight.bold,
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            Size="L";
+                          });
+                        },
+                        child: Container(
+                          child: Center(
+                            child: Text("L",
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: MediaQuery.of(context).size.height*0.02,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
+                          height: MediaQuery.of(context).size.height*0.2,
+                          width: MediaQuery.of(context).size.width*0.1,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Size=="L"?Colors.grey.shade700:Colors.white,width: 2),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
                         ),
-                        height: MediaQuery.of(context).size.height*0.2,
-                        width: MediaQuery.of(context).size.width*0.1,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Size=="L"?Colors.grey.shade700:Colors.white,width: 2),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
                       ),
-                      Container(
-                        child: Center(
-                          child: Text("XL",
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontSize: MediaQuery.of(context).size.height*0.02,
-                              fontWeight: FontWeight.bold,
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            Size="XL";
+                          });
+                        },
+                        child: Container(
+                          child: Center(
+                            child: Text("XL",
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: MediaQuery.of(context).size.height*0.02,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
+                          height: MediaQuery.of(context).size.height*0.2,
+                          width: MediaQuery.of(context).size.width*0.1,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Size=="XL"?Colors.grey.shade700:Colors.white,width: 2),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
                         ),
-                        height: MediaQuery.of(context).size.height*0.2,
-                        width: MediaQuery.of(context).size.width*0.1,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Size=="XL"?Colors.grey.shade700:Colors.white,width: 2),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
                       ),
                     ],
                   ),
@@ -383,57 +411,85 @@ class _DetailPageState extends State<DetailPage> {
               Expanded(
                 child: Row(
                   children: [
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(Icons.circle,size: 10,color: Colors.orange.shade900,),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          Color="Red";
+                        });
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(Icons.circle,size: 10,color: Colors.orange.shade900,),
+                        ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: Color=="Red"?Colors.orange.shade900:Colors.white,
+                                width: 2)
+                        ),
+                        margin: EdgeInsets.fromLTRB(20,0,10,10),
                       ),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Color=="Red"?Colors.orange.shade900:Colors.white,
-                              width: 2)
-                      ),
-                      margin: EdgeInsets.fromLTRB(20,0,10,10),
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(Icons.circle,size: 10,color: Colors.indigo,),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          Color="Indigo";
+                        });
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(Icons.circle,size: 10,color: Colors.indigo,),
+                        ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: Color=="Indigo"?Colors.indigo:Colors.white,
+                                width: 2)
+                        ),
+                        margin: EdgeInsets.fromLTRB(0,0,10,10),
                       ),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Color=="Indigo"?Colors.indigo:Colors.white,
-                              width: 2)
-                      ),
-                      margin: EdgeInsets.fromLTRB(0,0,10,10),
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(Icons.circle,size: 10,color: Colors.teal,),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          Color="Teal";
+                        });
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(Icons.circle,size: 10,color: Colors.teal,),
+                        ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: Color=="Teal"?Colors.teal:Colors.white,
+                                width: 2)
+                        ),
+                        margin: EdgeInsets.fromLTRB(0,0,10,10),
                       ),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Color=="Teal"?Colors.teal:Colors.white,
-                              width: 2)
-                      ),
-                      margin: EdgeInsets.fromLTRB(0,0,10,10),
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(Icons.circle,size: 10,color: Colors.brown.shade400,),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          Color="Brown";
+                        });
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(Icons.circle,size: 10,color: Colors.brown.shade400,),
+                        ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: Color=="Brown"?Colors.brown.shade400:Colors.white,
+                                width: 2)
+                        ),
+                        margin: EdgeInsets.fromLTRB(0,0,10,10),
                       ),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Color=="Brown"?Colors.brown.shade400:Colors.white,
-                              width: 2)
-                      ),
-                      margin: EdgeInsets.fromLTRB(0,0,10,10),
                     )
                   ],
                 ),
@@ -484,6 +540,8 @@ class _DetailPageState extends State<DetailPage> {
                     order['productID']=product['productID'];
                     order['userID']=this.loggedUserID;
                     order['totalAmount']=product['price']*order['quantity'];
+                    order['size']=this.Size;
+                    order['color']=this.Color;
 
                     var response = widget.order==null
                         ? await OrderApi().addOrder(this.order!)
